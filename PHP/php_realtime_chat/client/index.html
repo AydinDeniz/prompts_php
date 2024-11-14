@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat</title>
+</head>
+<body>
+    <div>
+        <h2>Real-Time Chat</h2>
+        <input type="text" id="username" placeholder="Enter username" />
+        <button onclick="login()">Login</button>
+    </div>
+    <div id="chat" style="display:none;">
+        <h3>Chat Room</h3>
+        <div id="messages" style="height:200px; overflow-y:scroll;"></div>
+        <input type="text" id="message" placeholder="Type your message" />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        let ws;
+
+        function login() {
+            const username = document.getElementById("username").value;
+            if (username) {
+                document.getElementById("chat").style.display = "block";
+                ws = new WebSocket("ws://localhost:8080");
+                ws.onopen = () => console.log("Connected to chat server");
+                ws.onmessage = (event) => {
+                    const messageDiv = document.createElement("div");
+                    messageDiv.textContent = event.data;
+                    document.getElementById("messages").appendChild(messageDiv);
+                };
+            }
+        }
+
+        function sendMessage() {
+            const message = document.getElementById("message").value;
+            if (ws && message) {
+                ws.send(message);
+                document.getElementById("message").value = "";
+            }
+        }
+    </script>
+</body>
+</html>
+    
