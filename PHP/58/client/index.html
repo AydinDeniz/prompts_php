@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Non-Profit Crowdfunding Platform</title>
+</head>
+<body>
+    <h2>Create a Campaign</h2>
+    <form id="campaignForm">
+        <input type="text" name="title" placeholder="Campaign Title" required>
+        <textarea name="description" placeholder="Description" required></textarea>
+        <input type="number" name="goal_amount" placeholder="Goal Amount" required>
+        <button type="submit">Create Campaign</button>
+    </form>
+
+    <h2>Active Campaigns</h2>
+    <div id="campaigns"></div>
+
+    <script>
+        function loadCampaigns() {
+            fetch("scripts/fetch_campaigns.php")
+                .then(response => response.json())
+                .then(data => {
+                    let campaignsDiv = document.getElementById("campaigns");
+                    campaignsDiv.innerHTML = "<h3>Fundraising Campaigns</h3>";
+                    data.campaigns.forEach(campaign => {
+                        campaignsDiv.innerHTML += `
+                            <div>
+                                <p><strong>${campaign.title}</strong> - ${campaign.description}</p>
+                                <p>Goal: $${campaign.goal_amount}, Raised: $${campaign.raised_amount}</p>
+                                <button onclick="donate(${campaign.id})">Donate</button>
+                            </div>
+                        `;
+                    });
+                });
+        }
+
+        function donate(campaignId) {
+            let donorName = prompt("Enter your name:");
+            let amount = prompt("Enter donation amount:");
+
+            if (donorName && amount) {
+                fetch("scripts/donate.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ campaign_id: campaignId, donor_name: donorName, amount: amount })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    loadCampaigns();
+                });
+            }
+        }
+
+        document.getElementById("campaignForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("scripts/create_campaign.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                loadCampaigns();
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        loadCampaigns();
+    </script>
+</body>
+</html>
+    

@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Reservation System</title>
+</head>
+<body>
+    <h2>Available Parking Slots</h2>
+    <button onclick="loadSlots()">Check Availability</button>
+    <div id="parkingSlots"></div>
+
+    <h2>Reserve a Slot</h2>
+    <form id="reservationForm">
+        <input type="text" name="user_name" placeholder="Your Name" required>
+        <input type="number" name="slot_id" placeholder="Slot ID" required>
+        <button type="submit">Reserve</button>
+    </form>
+
+    <script>
+        function loadSlots() {
+            fetch("scripts/check_availability.php")
+                .then(response => response.json())
+                .then(data => {
+                    let slotsDiv = document.getElementById("parkingSlots");
+                    slotsDiv.innerHTML = "<h3>Available Slots</h3>";
+                    data.available_slots.forEach(slot => {
+                        slotsDiv.innerHTML += `<p>Slot ${slot.id}: ${slot.status}</p>`;
+                    });
+                });
+        }
+
+        document.getElementById("reservationForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("scripts/reserve_parking.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                loadSlots();
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        loadSlots();
+    </script>
+</body>
+</html>
+    

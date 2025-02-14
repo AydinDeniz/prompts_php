@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Disaster Alert System</title>
+</head>
+<body>
+    <h2>Check Disaster Alerts</h2>
+    <button onclick="getLocation()">Check Alerts</button>
+    <div id="alerts"></div>
+
+    <h2>Report a Disaster</h2>
+    <form id="reportForm">
+        <input type="text" name="type" placeholder="Disaster Type" required>
+        <input type="text" name="description" placeholder="Description" required>
+        <button type="submit">Report</button>
+    </form>
+
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    fetchAlerts(position.coords.latitude, position.coords.longitude);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function fetchAlerts(lat, lon) {
+            fetch("scripts/fetch_alerts.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ latitude: lat, longitude: lon })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let alertsDiv = document.getElementById("alerts");
+                alertsDiv.innerHTML = "<h3>Nearby Alerts:</h3>";
+                data.alerts.forEach(alert => {
+                    alertsDiv.innerHTML += `<p><strong>${alert.type}:</strong> ${alert.description} (Lat: ${alert.latitude}, Lon: ${alert.longitude})</p>`;
+                });
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        document.getElementById("reportForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const formData = new FormData(event.target);
+                    formData.append("latitude", position.coords.latitude);
+                    formData.append("longitude", position.coords.longitude);
+
+                    fetch("scripts/add_alert.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(Object.fromEntries(formData))
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                    })
+                    .catch(error => console.error("Error:", error));
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
+    </script>
+</body>
+</html>
+    

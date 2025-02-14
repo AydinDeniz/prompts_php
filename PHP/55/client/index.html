@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Inventory Management</title>
+</head>
+<body>
+    <h2>Current Inventory</h2>
+    <button onclick="loadInventory()">Refresh Inventory</button>
+    <div id="inventory"></div>
+
+    <script>
+        function loadInventory() {
+            fetch("scripts/fetch_inventory.php")
+                .then(response => response.json())
+                .then(data => {
+                    let inventoryDiv = document.getElementById("inventory");
+                    inventoryDiv.innerHTML = "<h3>Product Stock</h3>";
+                    data.inventory.forEach(item => {
+                        inventoryDiv.innerHTML += `<p>Product ${item.product_id}: ${item.name} - ${item.quantity} units</p>`;
+                    });
+                });
+        }
+
+        loadInventory();
+    </script>
+</body>
+</html>
+    

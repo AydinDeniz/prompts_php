@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Healthcare Consultation</title>
+</head>
+<body>
+    <h2>Book an Appointment</h2>
+    <form id="appointmentForm">
+        <input type="text" name="patient_name" placeholder="Patient Name" required>
+        <input type="text" name="doctor" placeholder="Doctor's Name" required>
+        <input type="date" name="date" required>
+        <button type="submit">Book Appointment</button>
+    </form>
+
+    <h2>Upcoming Appointments</h2>
+    <button onclick="loadAppointments()">View Appointments</button>
+    <div id="appointments"></div>
+
+    <script>
+        function loadAppointments() {
+            fetch("scripts/fetch_appointments.php")
+                .then(response => response.json())
+                .then(data => {
+                    let appointmentsDiv = document.getElementById("appointments");
+                    appointmentsDiv.innerHTML = "<h3>Scheduled Appointments</h3>";
+                    data.appointments.forEach(appointment => {
+                        appointmentsDiv.innerHTML += `<p>Patient: ${appointment.patient_name}, Doctor: ${appointment.doctor}, Date: ${appointment.appointment_date}</p>`;
+                    });
+                });
+        }
+
+        document.getElementById("appointmentForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("scripts/book_appointment.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                loadAppointments();
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        loadAppointments();
+    </script>
+</body>
+</html>
+    

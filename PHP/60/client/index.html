@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Listing & Valuation</title>
+</head>
+<body>
+    <h2>Add Property Listing</h2>
+    <form id="listingForm">
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="text" name="location" placeholder="Location" required>
+        <input type="number" name="size" placeholder="Size (sq ft)" required>
+        <input type="number" name="price" placeholder="Price" required>
+        <button type="submit">Add Listing</button>
+    </form>
+
+    <h2>Available Listings</h2>
+    <div id="listings"></div>
+
+    <h2>Estimate Property Price</h2>
+    <form id="estimateForm">
+        <input type="text" name="location" placeholder="Location" required>
+        <input type="number" name="size" placeholder="Size (sq ft)" required>
+        <button type="submit">Get Estimate</button>
+    </form>
+
+    <div id="estimateResult"></div>
+
+    <script>
+        function loadListings() {
+            fetch("scripts/fetch_listings.php")
+                .then(response => response.json())
+                .then(data => {
+                    let listingsDiv = document.getElementById("listings");
+                    listingsDiv.innerHTML = "<h3>Real Estate Listings</h3>";
+                    data.listings.forEach(listing => {
+                        listingsDiv.innerHTML += `<p><strong>${listing.title}</strong> - ${listing.location}, ${listing.size} sq ft, $${listing.price}</p>`;
+                    });
+                });
+        }
+
+        document.getElementById("listingForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("scripts/add_listing.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                loadListings();
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        document.getElementById("estimateForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("scripts/get_estimate.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("estimateResult").innerHTML = `<p>Estimated Price: $${data.estimated_price}</p>`;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        loadListings();
+    </script>
+</body>
+</html>
+    

@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Management & GPS Tracking</title>
+</head>
+<body>
+    <h2>Fleet Tracking</h2>
+    <button onclick="getVehicleLocations()">Show Vehicle Locations</button>
+    <div id="locations"></div>
+
+    <script>
+        function getVehicleLocations() {
+            fetch("scripts/fetch_locations.php")
+                .then(response => response.json())
+                .then(data => {
+                    let locationsDiv = document.getElementById("locations");
+                    locationsDiv.innerHTML = "<h3>Recent Locations</h3>";
+                    data.locations.forEach(location => {
+                        locationsDiv.innerHTML += `<p>Vehicle ${location.vehicle_id}: Lat ${location.latitude}, Lon ${location.longitude} (Time: ${location.timestamp})</p>`;
+                    });
+                });
+        }
+    </script>
+</body>
+</html>
+    

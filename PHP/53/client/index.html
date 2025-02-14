@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMS with Gamification</title>
+</head>
+<body>
+    <h2>Available Courses</h2>
+    <div id="courses"></div>
+
+    <h2>Leaderboard</h2>
+    <div id="leaderboard"></div>
+
+    <script>
+        function loadCourses() {
+            fetch("scripts/fetch_courses.php")
+                .then(response => response.json())
+                .then(data => {
+                    let courseDiv = document.getElementById("courses");
+                    courseDiv.innerHTML = "";
+                    data.courses.forEach(course => {
+                        courseDiv.innerHTML += `
+                            <p><strong>${course.title}</strong> - ${course.description}</p>
+                            <button onclick="enroll(${course.id})">Enroll</button>
+                        `;
+                    });
+                });
+        }
+
+        function loadLeaderboard() {
+            fetch("scripts/leaderboard.php")
+                .then(response => response.json())
+                .then(data => {
+                    let leaderboardDiv = document.getElementById("leaderboard");
+                    leaderboardDiv.innerHTML = "<h3>Top Students</h3>";
+                    data.leaderboard.forEach(user => {
+                        leaderboardDiv.innerHTML += `<p>${user.name} - ${user.total_points} points</p>`;
+                    });
+                });
+        }
+
+        function enroll(courseId) {
+            fetch("scripts/enroll.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: 1, course_id: courseId }) 
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                loadLeaderboard();
+            });
+        }
+
+        loadCourses();
+        loadLeaderboard();
+    </script>
+</body>
+</html>
+    

@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Voting System</title>
+</head>
+<body>
+    <h2>Cast Your Vote</h2>
+    <form id="voteForm">
+        <input type="text" name="voter_id" placeholder="Voter ID" required>
+        <input type="text" name="candidate" placeholder="Candidate Name" required>
+        <button type="submit">Vote</button>
+    </form>
+
+    <h2>Verify Your Vote</h2>
+    <form id="verifyForm">
+        <input type="text" name="voter_id" placeholder="Voter ID" required>
+        <button type="submit">Verify</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        function handleFormSubmit(event, url) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerHTML = `<p>${data.message}</p>`;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        document.getElementById("voteForm").addEventListener("submit", function(event) {
+            handleFormSubmit(event, "scripts/cast_vote.php");
+        });
+
+        document.getElementById("verifyForm").addEventListener("submit", function(event) {
+            handleFormSubmit(event, "scripts/verify_vote.php");
+        });
+    </script>
+</body>
+</html>
+    
