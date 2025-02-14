@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice-Controlled PHP Web App</title>
+</head>
+<body>
+    <h2>Voice Assistant</h2>
+    <button onclick="startListening()">Start Listening</button>
+    <p id="output"></p>
+
+    <script>
+        function startListening() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = "en-US";
+
+            recognition.onstart = () => console.log("Listening...");
+            recognition.onresult = (event) => {
+                const command = event.results[0][0].transcript;
+                document.getElementById("output").innerHTML = `You said: ${command}`;
+                sendCommand(command);
+            };
+
+            recognition.onerror = (event) => console.error("Error:", event.error);
+            recognition.start();
+        }
+
+        function sendCommand(command) {
+            fetch("scripts/process_command.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ command })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("output").innerHTML += `<br>Response: ${data.response || data.error}`;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
+    

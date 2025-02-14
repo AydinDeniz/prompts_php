@@ -1,0 +1,8 @@
+
+CREATE TABLE IF NOT EXISTS signed_documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    file_name VARCHAR(255) NOT NULL,
+    signature TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+    

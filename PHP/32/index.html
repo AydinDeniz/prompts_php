@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Signature System</title>
+</head>
+<body>
+    <h2>Sign a Document</h2>
+    <form id="signForm" enctype="multipart/form-data">
+        <input type="file" name="document" required>
+        <button type="submit">Sign</button>
+    </form>
+
+    <h2>Verify a Document</h2>
+    <form id="verifyForm" enctype="multipart/form-data">
+        <input type="file" name="document" required>
+        <button type="submit">Verify</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        function handleFormSubmit(event, url) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch(url, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerHTML = `<p>${data.message}</p>`;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        document.getElementById("signForm").addEventListener("submit", function(event) {
+            handleFormSubmit(event, "scripts/sign_document.php");
+        });
+
+        document.getElementById("verifyForm").addEventListener("submit", function(event) {
+            handleFormSubmit(event, "scripts/verify_document.php");
+        });
+    </script>
+</body>
+</html>
+    

@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Dashboard</title>
+</head>
+<body>
+    <h2>IoT Sensor Data Dashboard</h2>
+    <button onclick="fetchData()">Refresh Data</button>
+    <table border="1">
+        <thead>
+            <tr><th>Device ID</th><th>Temperature</th><th>Humidity</th><th>Timestamp</th></tr>
+        </thead>
+        <tbody id="dataTable"></tbody>
+    </table>
+
+    <script>
+        function fetchData() {
+            fetch("../scripts/fetch_data.php")
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById("dataTable");
+                    tableBody.innerHTML = "";
+                    data.forEach(row => {
+                        tableBody.innerHTML += `<tr>
+                            <td>${row.device_id}</td>
+                            <td>${row.temperature}°C</td>
+                            <td>${row.humidity}%</td>
+                            <td>${row.timestamp}</td>
+                        </tr>`;
+                    });
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        }
+
+        fetchData();
+        setInterval(fetchData, 30000);
+    </script>
+</body>
+</html>
+    

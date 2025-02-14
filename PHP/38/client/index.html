@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Wallet</title>
+</head>
+<body>
+    <h2>Create Wallet</h2>
+    <form id="walletForm">
+        <input type="text" name="user_id" placeholder="User ID" required>
+        <button type="submit">Create</button>
+    </form>
+
+    <h2>Send Transaction</h2>
+    <form id="transactionForm">
+        <input type="text" name="from_address" placeholder="From Address" required>
+        <input type="text" name="to_address" placeholder="To Address" required>
+        <input type="number" name="amount" placeholder="Amount" required>
+        <button type="submit">Send</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        function handleFormSubmit(event, url) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerHTML = `<p>${data.message}</p>`;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        document.getElementById("walletForm").addEventListener("submit", function(event) {
+            handleFormSubmit(event, "scripts/create_wallet.php");
+        });
+
+        document.getElementById("transactionForm").addEventListener("submit", function(event) {
+            handleFormSubmit(event, "scripts/send_transaction.php");
+        });
+    </script>
+</body>
+</html>
+    

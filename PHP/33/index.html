@@ -1,0 +1,34 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microservices API Gateway</title>
+</head>
+<body>
+    <h2>Microservices API Gateway</h2>
+    <button onclick="fetchUsers()">Get Users</button>
+    <button onclick="fetchOrders()">Get Orders</button>
+    <div id="response"></div>
+
+    <script>
+        function fetchUsers() {
+            fetch("api_gateway/index.php/users")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                });
+        }
+
+        function fetchOrders() {
+            fetch("api_gateway/index.php/orders")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+                });
+        }
+    </script>
+</body>
+</html>
+    
