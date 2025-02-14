@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Generator</title>
+</head>
+<body>
+    <h2>Generate Invoice</h2>
+    <form id="invoiceForm">
+        <input type="text" name="invoice_number" placeholder="Invoice Number" required>
+        <input type="text" name="customer_name" placeholder="Customer Name" required>
+        <textarea name="items" placeholder='Enter items in JSON format [{"name": "Item1", "price": 10.00}]' required></textarea>
+        <button type="submit">Generate Invoice</button>
+    </form>
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('invoiceForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            fetch("scripts/generate_invoice.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerHTML = `<a href="${data.file}" download>Download Invoice</a>`;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
+    

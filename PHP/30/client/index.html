@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learning Platform</title>
+</head>
+<body>
+    <h2>Available Courses</h2>
+    <div id="videos"></div>
+
+    <h2>Upload New Video</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="text" name="title" placeholder="Video Title" required>
+        <input type="file" name="video" accept="video/*" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <script>
+        function loadVideos() {
+            fetch("../scripts/get_videos.php")
+                .then(response => response.json())
+                .then(data => {
+                    const videoContainer = document.getElementById("videos");
+                    videoContainer.innerHTML = "";
+                    data.forEach(video => {
+                        videoContainer.innerHTML += `
+                            <p><strong>${video.title}</strong></p>
+                            <video width="400" controls>
+                                <source src="../videos/${video.file_path}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        `;
+                    });
+                });
+        }
+
+        document.getElementById("uploadForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("../scripts/upload_video.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                loadVideos();
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        loadVideos();
+    </script>
+</body>
+</html>
+    

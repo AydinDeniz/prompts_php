@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Form Builder</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        form { max-width: 400px; margin: auto; padding: 10px; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h2>Dynamic Form Builder</h2>
+    <div id="form-container"></div>
+    <button onclick="addField()">Add Field</button>
+    <button onclick="submitForm()">Submit</button>
+
+    <div id="response"></div>
+
+    <script>
+        let fields = [];
+
+        function addField() {
+            const fieldType = prompt("Enter field type (text, email, number):");
+            if (!["text", "email", "number"].includes(fieldType)) return alert("Invalid field type.");
+
+            const label = prompt("Enter field label:");
+            const required = confirm("Should this field be required?");
+
+            const field = { type: fieldType, label, required, value: "" };
+            fields.push(field);
+            renderForm();
+        }
+
+        function renderForm() {
+            const formContainer = document.getElementById("form-container");
+            formContainer.innerHTML = "";
+            fields.forEach((field, index) => {
+                formContainer.innerHTML += `<label>${field.label}</label><br>
+                <input type="${field.type}" onchange="updateValue(${index}, this.value)"><br>`;
+            });
+        }
+
+        function updateValue(index, value) {
+            fields[index].value = value;
+        }
+
+        function submitForm() {
+            fetch("scripts/handle_form.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(fields)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerHTML = data.status === "error" ?
+                    `<p style="color:red">${data.messages.join("<br>")}</p>` :
+                    `<p style="color:green">${data.message}</p>`;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
+    

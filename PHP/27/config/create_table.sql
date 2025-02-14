@@ -1,0 +1,7 @@
+
+CREATE TABLE IF NOT EXISTS urls (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    short_code VARCHAR(10) UNIQUE NOT NULL,
+    long_url TEXT NOT NULL
+);
+    

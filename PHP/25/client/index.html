@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Ticket Booking</title>
+</head>
+<body>
+    <h2>Available Events</h2>
+    <div id="events"></div>
+
+    <h2>Book a Ticket</h2>
+    <form id="bookingForm">
+        <select name="event_id" id="event_id" required></select>
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <button type="submit">Book Ticket</button>
+    </form>
+
+    <script>
+        function fetchEvents() {
+            fetch("../scripts/events.php")
+                .then(response => response.json())
+                .then(data => {
+                    const eventSelect = document.getElementById("event_id");
+                    const eventsDiv = document.getElementById("events");
+                    eventsDiv.innerHTML = "";
+
+                    data.forEach(event => {
+                        eventSelect.innerHTML += `<option value="${event.id}">${event.name} - ${event.date}</option>`;
+                        eventsDiv.innerHTML += `<p><strong>${event.name}</strong> - ${event.date}</p>`;
+                    });
+                });
+        }
+
+        document.getElementById("bookingForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("../scripts/book_ticket.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    event_id: formData.get("event_id"),
+                    name: formData.get("name"),
+                    email: formData.get("email")
+                })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => console.error("Error:", error));
+        });
+
+        fetchEvents();
+    </script>
+</body>
+</html>
+    
