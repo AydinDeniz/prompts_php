@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI DevOps CI/CD Pipeline</title>
+</head>
+<body>
+    <h2>Trigger CI/CD Pipeline</h2>
+    <button onclick="runPipeline()">Run Pipeline</button>
+    <pre id="result"></pre>
+
+    <script>
+        function runPipeline() {
+            fetch("scripts/trigger_pipeline.php", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("result").innerText = data.output;
+                })
+                .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
+    

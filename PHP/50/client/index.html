@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Web Scraper & Summarizer</title>
+</head>
+<body>
+    <h2>Scrape & Summarize Web Content</h2>
+    <form id="scrapeForm">
+        <input type="url" name="url" placeholder="Enter Website URL" required>
+        <button type="submit">Scrape & Summarize</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("scrapeForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("scripts/scrape_and_summarize.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerHTML = `<h3>Summary:</h3><p>${data.summary.summary}</p>`;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
+    

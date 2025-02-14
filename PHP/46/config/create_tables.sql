@@ -1,0 +1,11 @@
+
+CREATE TABLE IF NOT EXISTS nfts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    token_id VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    image VARCHAR(255) NOT NULL,
+    metadata TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+    

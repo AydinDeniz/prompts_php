@@ -1,0 +1,27 @@
+
+name: PHP DevOps Pipeline
+
+on: [push]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Install Dependencies
+        run: composer install
+
+      - name: Run Tests
+        run: phpunit --bootstrap vendor/autoload.php tests/
+
+      - name: Deploy Application
+        run: echo "Deploying to production..."
+    

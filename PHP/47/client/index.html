@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero-Trust Authentication</title>
+</head>
+<body>
+    <h2>Register</h2>
+    <form id="registerForm">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Register</button>
+    </form>
+
+    <h2>Login</h2>
+    <form id="loginForm">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="text" name="otp_code" placeholder="OTP Code" required>
+        <button type="submit">Login</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        function handleFormSubmit(event, url) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerHTML = `<p>${data.message}</p>`;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        document.getElementById("registerForm").addEventListener("submit", function(event) {
+            handleFormSubmit(event, "scripts/register.php");
+        });
+
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            handleFormSubmit(event, "scripts/login.php");
+        });
+    </script>
+</body>
+</html>
+    

@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Marketplace</title>
+</head>
+<body>
+    <h2>Mint a New NFT</h2>
+    <form id="mintForm" enctype="multipart/form-data">
+        <input type="text" name="name" placeholder="NFT Name" required>
+        <input type="text" name="description" placeholder="Description" required>
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Mint NFT</button>
+    </form>
+
+    <h2>Available NFTs</h2>
+    <div id="nftGallery"></div>
+
+    <script>
+        function loadNFTs() {
+            fetch("scripts/list_nfts.php")
+                .then(response => response.json())
+                .then(data => {
+                    const gallery = document.getElementById("nftGallery");
+                    gallery.innerHTML = "";
+                    data.forEach(nft => {
+                        gallery.innerHTML += `
+                            <div>
+                                <p><strong>${nft.name}</strong></p>
+                                <p>${nft.description}</p>
+                                <img src="${nft.image}" width="200">
+                                <p>Token ID: ${nft.token_id}</p>
+                            </div>
+                        `;
+                    });
+                });
+        }
+
+        document.getElementById("mintForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("scripts/mint_nft.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                loadNFTs();
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        loadNFTs();
+    </script>
+</body>
+</html>
+    

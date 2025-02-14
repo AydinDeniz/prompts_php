@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serverless PHP API</title>
+</head>
+<body>
+    <h2>Serverless PHP API on AWS Lambda</h2>
+    <button onclick="callLambda()">Call Lambda</button>
+    <div id="response"></div>
+
+    <script>
+        function callLambda() {
+            fetch("https://your-api-gateway-url.amazonaws.com/prod/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ action: "test" })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
+    

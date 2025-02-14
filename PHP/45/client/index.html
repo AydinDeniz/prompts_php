@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Stock Market Prediction</title>
+</head>
+<body>
+    <h2>Stock Market Prediction</h2>
+    <form id="predictionForm">
+        <input type="text" name="ticker" placeholder="Enter Stock Ticker" required>
+        <button type="submit">Predict</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("predictionForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("scripts/fetch_predictions.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerHTML = `<p>Ticker: ${data.ticker}</p><p>Prediction: ${data.prediction.predicted_change}</p><p>Recommendation: ${data.prediction.recommendation}</p>`;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
+    

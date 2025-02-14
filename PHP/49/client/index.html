@@ -1,0 +1,40 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Personalized E-Commerce</title>
+</head>
+<body>
+    <h2>Product Recommendations</h2>
+    <form id="recommendForm">
+        <input type="text" name="user_id" placeholder="Enter User ID" required>
+        <button type="submit">Get Recommendations</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("recommendForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+
+            fetch("scripts/recommend_products.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(Object.fromEntries(formData))
+            })
+            .then(response => response.json())
+            .then(data => {
+                let output = "<h3>Recommended Products:</h3>";
+                data.recommendations.forEach(product => {
+                    output += `<p>${product.name} - ${product.category}</p>`;
+                });
+                document.getElementById("result").innerHTML = output;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
+    
